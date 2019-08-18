@@ -1,0 +1,7 @@
+{
+  "name": "vendor-plugin",
+  "version": "0.0.1",
+  "main": "src/VendorPlugin.js",
+  "author": "David Mihal <david@dmihal.com>",
+  "license": "MIT"
+}
