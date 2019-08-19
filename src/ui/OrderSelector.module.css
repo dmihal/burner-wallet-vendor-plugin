@@ -1,7 +1,15 @@
 .itemRow {
   display: flex;
   justify-content: space-between;
+  padding: 4px 0;
+  margin: 4px 0;
+  border-bottom: solid 1px #CCCCCC;
 }
 .right {
   text-align: right;
+}
+.bottom {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
 }

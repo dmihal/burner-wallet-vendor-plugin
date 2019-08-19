@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 const classes = require('./OrderSelector.module.css')
 
-const OrderSelector = ({ items, balance, onSend, unit }) => {
+const OrderSelector = ({ items, balance, onSend, unit, burnerComponents }) => {
   const [quantities, setQuantities] = useState({});
   const setQuanity = (name, quanity) => {
     setQuantities({
@@ -27,38 +27,54 @@ const OrderSelector = ({ items, balance, onSend, unit }) => {
     _total + parseFloat(item.price) * parseFloat(quantities[item.name] || 0), 0);
   const total = subtotal + parseFloat(tip);
 
+  const { Button } = burnerComponents;
+
   return (
     <div className={classes.orders}>
       {items.map((item) => (
         <div className={classes.itemRow} key={item.name}>
-          <div>{item.name}</div>
-          <div>{item.price}</div>
           <div>
-            <input
-              type="number"
-              value={quantities[item.name] || '0'}
-              min="0"
-              step="0"
-              onChange={e => setQuanity(item.name, e.target.value)}
-            />
+            <div>{item.name}</div>
+            {item.description && (
+              <div>{item.description}</div>
+            )}
+          </div>
+          <div>
+            <div className={classes.right}>{item.price} {unit}</div>
+            <div className={classes.right}>
+              Quantity: {}
+              <input
+                type="number"
+                value={quantities[item.name] || '0'}
+                min="0"
+                step="0"
+                onChange={e => setQuanity(item.name, e.target.value)}
+              />
+            </div>
           </div>
         </div>
       ))}
 
-      <div className={classes.right}>Subtotal: {subtotal} {unit}</div>
+      <div className={classes.bottom}>
+        <div>
+          <div>Note:</div>
+          <div>
+            <textarea onChange={e => setNotes(e.target.value)} value={notes} />
+          </div>
+        </div>
 
-      <div className={classes.right}>
-        Tip: <input type="number" min="0" value={tip} onChange={e => setTip(e.target.value)} />
+        <div>
+          <div className={classes.right}>Subtotal: {subtotal} {unit}</div>
+          <div className={classes.right}>
+            Tip: <input type="number" min="0" value={tip} onChange={e => setTip(e.target.value)} />
+          </div>
+          <div className={classes.right}>Total: {total} {unit}</div>
+        </div>
       </div>
 
-      <div className={classes.right}>Total: {total} {unit}</div>
-
-      <div>
-        Note: <input value={notes} onChange={e => setNotes(e.target.value)} />
-      </div>
       <div>{message}</div>
       <div>
-        <button onClick={() => onSend(total, message)} disabled={total === 0}>Send</button>
+        <Button onClick={() => onSend(total, message)} disabled={total === 0}>Send</Button>
       </div>
     </div>
   );
