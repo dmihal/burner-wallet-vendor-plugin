@@ -16,7 +16,7 @@ const OrderSelector = ({ items, balance, onSend, unit, burnerComponents }) => {
     .filter((item) => quantities[item.name])
     .map((item) => `${item.name}: ${quantities[item.name]}`)
     .join(', ');
-  if (tip !== '0') {
+  if (tip != '0') {
     message += `, Tip: ${tip}`
   }
   if (notes.length > 0) {
@@ -26,6 +26,8 @@ const OrderSelector = ({ items, balance, onSend, unit, burnerComponents }) => {
   const subtotal = items.reduce((_total, item) =>
     _total + parseFloat(item.price) * parseFloat(quantities[item.name] || 0), 0);
   const total = subtotal + parseFloat(tip);
+
+  const insufficentBalance = parseFloat(balance.displayBalance) < total;
 
   const { Button } = burnerComponents;
 
@@ -49,6 +51,7 @@ const OrderSelector = ({ items, balance, onSend, unit, burnerComponents }) => {
                 min="0"
                 step="0"
                 onChange={e => setQuanity(item.name, e.target.value)}
+                className={classes.input}
               />
             </div>
           </div>
@@ -56,25 +59,36 @@ const OrderSelector = ({ items, balance, onSend, unit, burnerComponents }) => {
       ))}
 
       <div className={classes.bottom}>
-        <div>
+        <div className={classes.noteBox}>
           <div>Note:</div>
           <div>
-            <textarea onChange={e => setNotes(e.target.value)} value={notes} />
+            <textarea onChange={e => setNotes(e.target.value)} value={notes} className={classes.notes} />
           </div>
         </div>
 
         <div>
           <div className={classes.right}>Subtotal: {subtotal} {unit}</div>
           <div className={classes.right}>
-            Tip: <input type="number" min="0" value={tip} onChange={e => setTip(e.target.value)} />
+            Tip: {}
+            <input
+              type="number"
+              min="0"
+              value={tip}
+              onChange={e => setTip(parseFloat('0' + e.target.value))}
+              className={classes.input}
+            />
           </div>
-          <div className={classes.right}>Total: {total} {unit}</div>
+          <div className={classes.total}>Total: {total} {unit}</div>
         </div>
       </div>
 
-      <div>{message}</div>
+      {insufficentBalance && (
+        <div>Insufficent Balance: you only have {balance.displayBalance} {unit} remaining</div>
+      )}
       <div>
-        <Button onClick={() => onSend(total, message)} disabled={total === 0}>Send</Button>
+        <Button onClick={() => onSend(total, message)} disabled={total === 0 || insufficentBalance}>
+          Send
+        </Button>
       </div>
     </div>
   );

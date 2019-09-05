@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import OrderSelector from './OrderSelector';
 const classes = require('./VendorPage.module.css');
 
@@ -17,6 +17,11 @@ export default class VendorPage extends Component {
     const selectedVendor = match.params.vendorName ? plugin.getVendor(match.params.vendorName) : null;
     const { newName, setName } = this.state;
     const asset = plugin.getAsset();
+    const vendors = plugin.getVendors();
+
+    if (vendors.length === 1 && !selectedVendor) {
+      actions.navigateTo(`/vendors/${vendors[0].id}`);
+    }
 
     return (
       <Page title="Vendors">
@@ -34,18 +39,22 @@ export default class VendorPage extends Component {
           </Button>
         </div>
 
-        <h3>Select Vendor</h3>
-        <div className={classes.vendorList}>
-          {plugin.getVendors().map(vendor => (
-            <Button
-              key={vendor.id}
-              onClick={() => actions.navigateTo(`/vendors/${vendor.id}`)}
-              disabled={selectedVendor && vendor.id === selectedVendor.id}
-            >
-              {vendor.name}
-            </Button>
-          ))}
-        </div>
+        {vendors.length > 1 && (
+          <Fragment>
+            <h3>Select Vendor</h3>
+            <div className={classes.vendorList}>
+              {vendors.map(vendor => (
+                <Button
+                  key={vendor.id}
+                  onClick={() => actions.navigateTo(`/vendors/${vendor.id}`)}
+                  disabled={selectedVendor && vendor.id === selectedVendor.id}
+                >
+                  {vendor.name}
+                </Button>
+              ))}
+            </div>
+          </Fragment>
+        )}
 
         <h3>Order</h3>
         {!selectedVendor && <div>Select a vendor</div>}

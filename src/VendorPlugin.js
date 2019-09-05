@@ -39,6 +39,8 @@ export default class VendorPlugin {
   }
 
   vendorSearch(query) {
-    return [];
+    return query.length === 0
+      ? []
+      : vendors.vendors.filter(vendor => vendor.name.toLowerCase().indexOf(query) === 0);
   }
 }
